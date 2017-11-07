@@ -39,7 +39,7 @@ void move(unsigned int start, unsigned int end)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(width, height), "Rings", sf::Style::Default);
+	sf::RenderWindow window(sf::VideoMode(width, height), "Rings", sf::Style::Close);
 
 	reset();
 
