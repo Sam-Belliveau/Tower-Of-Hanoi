@@ -39,6 +39,15 @@ void move(unsigned int start, unsigned int end)
 
 int main()
 {
+	printf("Controls:\n");
+	printf("	Add More Discs - (Up)\n\n");
+
+	printf("	Remove Discs - (Down)\n\n");
+
+	printf("	Reset - (Space)\n\n");
+
+	printf("	Move Discs - (Mouse)\n\n");
+
 	sf::ContextSettings set;
 	set.antialiasingLevel = 0;
 
