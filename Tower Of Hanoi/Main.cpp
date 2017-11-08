@@ -2,11 +2,11 @@
 #include "Type.h"
 #include "Stand.h"
 
-const unsigned int width = 1280;
-const unsigned int height = 720;
+const unsigned int width = 1200;
+const unsigned int height = 675;
 
 const sf::Color front(224, 224, 224);
-sf::Color back(32, 32, 32);
+const sf::Color back(32, 32, 32);
 
 unsigned int amount = 3;
 unsigned int max = 7;
@@ -23,9 +23,9 @@ void reset()
 {
 	steps = 0;
 	max = calculateMin(amount);
-	stands[0] = Stand(amount, sf::Vector2f(64, 64), sf::Vector2f(342, 500), Type::start);
-	stands[1] = Stand(amount, sf::Vector2f(470, 64), sf::Vector2f(342, 500), Type::misc);
-	stands[2] = Stand(amount, sf::Vector2f(876, 64), sf::Vector2f(342, 500), Type::end);
+	stands[0].construct(amount, sf::Vector2f(75, 150), sf::Vector2f(300, 400), Type::start);
+	stands[1].construct(amount, sf::Vector2f(450, 150), sf::Vector2f(300, 400), Type::misc);
+	stands[2].construct(amount, sf::Vector2f(825, 150), sf::Vector2f(300, 400), Type::end);
 }
 
 void move(unsigned int start, unsigned int end)
@@ -39,7 +39,10 @@ void move(unsigned int start, unsigned int end)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(width, height), "Rings", sf::Style::Close);
+	sf::ContextSettings set;
+	set.antialiasingLevel = 0;
+
+	sf::RenderWindow window(sf::VideoMode(width, height), "Towers of Hanoi", sf::Style::Close, set);
 
 	reset();
 
@@ -47,7 +50,7 @@ int main()
 
 	bool someBool = false;
 
-	int start;
+	int start = 0;
 
 	sf::Font font;
 
@@ -59,10 +62,10 @@ int main()
 
 	score.setFont(font);
 	score.setColor(front);
-	score.setCharacterSize(64);
-	score.setPosition(sf::Vector2f(64, 596));
+	score.setCharacterSize(60);
+	score.setPosition(sf::Vector2f(75, 575));
 	score.setStyle(sf::Text::Bold);
-	score.setString("(Drop)	Steps: 0 / 7");
+	score.setString("Steps: 0 / 7");
 
 	reset();
 
@@ -85,43 +88,55 @@ int main()
 
 			if (pos < width / 3)
 			{
+				stands[start].selectPos = (width/6);
+
 				if (someBool)
 				{
 					move(start, 0);
+					stands[start].selected = false;
 					someBool = false;
 				} else
 				{
 					if (stands[0].getAmount() != 0)
 					{
 						start = 0;
+						stands[start].selected = true;
 						someBool = true;
 					}
 				}
 			} else if (pos < (width / 3) * 2)
 			{
+				stands[start].selectPos = (width / 2);
+
 				if (someBool)
 				{
 					move(start, 1);
+					stands[start].selected = false;
 					someBool = false;
 				} else
 				{
 					if (stands[1].getAmount() != 0)
 					{
 						start = 1;
+						stands[start].selected = true;
 						someBool = true;
 					}
 				}
 			} else
 			{
+				stands[start].selectPos = (width / 6) * 5;
+
 				if (someBool)
 				{
 					move(start, 2);
+					stands[start].selected = false;
 					someBool = false;
 				} else
 				{
 					if (stands[2].getAmount() != 0)
 					{
 						start = 2;
+						stands[start].selected = true;
 						someBool = true;
 					}
 				}
@@ -138,7 +153,7 @@ int main()
 			while (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			if (amount > 2)
+			if (amount > 1)
 			{
 				amount--;
 			}
@@ -148,20 +163,26 @@ int main()
 
 		if (someBool)
 		{
-			back = sf::Color(32, 32, 40);
-		} else
-		{
-			back = sf::Color(40, 32, 32);
+			if (sf::Mouse::getPosition(window).x < width / 3)
+			{
+				stands[start].selectPos = (375 * 1) - 150;
+			} else if (sf::Mouse::getPosition(window).x < (width / 3) * 2)
+			{
+				stands[start].selectPos = (375 * 2) - 150;
+			} else
+			{
+				stands[start].selectPos = (375 * 3) - 150;
+			}
 		}
 
 		window.clear(back);
 
-		if (someBool)
+		if (amount < 10)
 		{
-			score.setString("(Drop)	Steps: " + std::to_string(steps) + " / " + std::to_string(max));
+			score.setString("(" + std::to_string(amount) + ")	 Steps: " + std::to_string(steps) + " / " + std::to_string(max));
 		} else
 		{
-			score.setString("(Grab)	Steps: " + std::to_string(steps) + " / " + std::to_string(max));
+			score.setString("(" + std::to_string(amount) + ")	Steps: " + std::to_string(steps) + " / " + std::to_string(max));
 		}
 
 		stands[0].drawStack(window);

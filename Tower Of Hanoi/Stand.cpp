@@ -2,10 +2,20 @@
 
 Stand::Stand(unsigned int amount, sf::Vector2f pos, sf::Vector2f size, Type type)
 {
+	construct(amount, pos, size, type);
+}
+
+Stand::Stand()
+{
+}
+
+void Stand::construct(unsigned int amount, sf::Vector2f pos, sf::Vector2f size, Type type)
+{
 	this->max = amount;
 	this->pos = pos;
 	this->size = size;
 	this->type = type;
+	selected = false;
 
 	stack.clear();
 	stack.resize(0);
@@ -17,10 +27,6 @@ Stand::Stand(unsigned int amount, sf::Vector2f pos, sf::Vector2f size, Type type
 			addToTop(i);
 		}
 	}
-}
-
-Stand::Stand()
-{
 }
 
 unsigned int Stand::getAmount()
@@ -75,37 +81,28 @@ void Stand::removeTop()
 
 void Stand::drawStack(sf::RenderWindow & window)
 {
-	const int baseMod = 16;
-	const int stemMod = 64;
-	const int space = 5;
-	const float heightMod = 1.5;
+	if (type == Type::end)
+	{
+		stemColor = sf::Color(0, 255, 0);
+	} else
+	{
+		stemColor = sf::Color(255, 255, 255);
+	}
 
-	sf::VertexArray stem(sf::TrianglesStrip, 4);
-	stem[0].color = sf::Color::White;
+	stem[0].color = stemColor;
 	stem[0].position = sf::Vector2f(pos.x + (size.x / 2 - size.x / stemMod), pos.y);
 
-	stem[1].color = sf::Color::White;
+	stem[1].color = stemColor;
 	stem[1].position = sf::Vector2f(pos.x + (size.x / 2 + size.x / stemMod), pos.y);
 
-	stem[2].color = sf::Color::White;
+	stem[2].color = stemColor;
 	stem[2].position = sf::Vector2f(pos.x + (size.x / 2 - size.x / stemMod), pos.y + size.y);
 
-	stem[3].color = sf::Color::White;
+	stem[3].color = stemColor;
 	stem[3].position = sf::Vector2f(pos.x + (size.x / 2 + size.x / stemMod), pos.y + size.y);
 
 	window.draw(stem);
 
-	sf::Color baseColor = sf::Color::White;
-
-	if (type == Type::start)
-	{
-		baseColor = sf::Color::Magenta;
-	} else if (type == Type::end)
-	{
-		baseColor = sf::Color::Cyan;
-	}
-
-	sf::VertexArray base(sf::TrianglesStrip, 4);
 	base[0].color = baseColor;
 	base[0].position = sf::Vector2f(pos.x, pos.y + (size.y - (size.y / baseMod)));
 
@@ -120,34 +117,42 @@ void Stand::drawStack(sf::RenderWindow & window)
 
 	window.draw(base);
 
-	const int height = (((size.y + pos.y) - ((size.y + pos.y) / baseMod)) - space * max) / (int)((float)max * heightMod);
-
-	sf::Color color = sf::Color::Red;
+	const float height = (size.y - (size.y / baseMod)) / ((float)max * heightMod);
 
 	if (done)
 	{
-		color = sf::Color::Green;
+		diskColor = sf::Color::Green;
+	} else
+	{
+		diskColor = sf::Color(255,0,0);
 	}
 
 	for (unsigned int i = 0; i < getAmount(); i++)
 	{
-		const int minX = ((size.x / 2) + pos.x) - ((stack[i] * size.x / 2) / (max + 1));
-		const int maxX = ((size.x / 2) + pos.x) + ((stack[i] * size.x / 2) / (max + 1));
+		if (selected && i == getAmount() - 1)
+		{
+			minX = ((float)selectPos) - ((float)(stack[i] * size.x / 2) + 1) / ((float)max + 1);
+			maxX = ((float)selectPos) + ((float)(stack[i] * size.x / 2) + 1) / ((float)max + 1);
+			minY = (pos.y - height) / 2;
+			maxY = (pos.y + height) / 2;
+		} else
+		{
+			minX = ((size.x / 2) + pos.x) - (((float)stack[i] * size.x / 2) + 1) / ((float)max + 1);
+			maxX = ((size.x / 2) + pos.x) + (((float)stack[i] * size.x / 2) + 1) / ((float)max + 1);
+			minY = (pos.y + size.y) - ((i) * height) - (size.y / baseMod) - space;
+			maxY = (pos.y + size.y) - ((i + 1) * height) - (size.y / baseMod);
+		}
 
-		const int minY = ((size.y + pos.y) - ((size.y) / baseMod)) - ((i) * height + i * space);
-		const int maxY = ((size.y + pos.y) - ((size.y) / baseMod)) - ((i + 1) * height + i * space);
-
-		sf::VertexArray temp(sf::TrianglesStrip, 4);
-		temp[0].color = color;
+		temp[0].color = diskColor;
 		temp[0].position = sf::Vector2f(minX, minY);
 
-		temp[1].color = color;
+		temp[1].color = diskColor;
 		temp[1].position = sf::Vector2f(minX, maxY);
 
-		temp[2].color = color;
+		temp[2].color = diskColor;
 		temp[2].position = sf::Vector2f(maxX, minY);
 
-		temp[3].color = color;
+		temp[3].color = diskColor;
 		temp[3].position = sf::Vector2f(maxX, maxY);
 
 		window.draw(temp);
