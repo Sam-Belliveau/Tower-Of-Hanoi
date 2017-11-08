@@ -77,7 +77,6 @@ int main()
 	score.setString("Steps: 0 / 7");
 
 	reset();
-
 	while (window.isOpen())
 	{
 		sf::Event evnt;
@@ -91,85 +90,89 @@ int main()
 			}
 		}
 
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		if (window.hasFocus())
 		{
-			int pos = sf::Mouse::getPosition(window).x;
-
-			if (pos < width / 3)
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				stands[start].selectPos = (width/6);
+				int pos = sf::Mouse::getPosition(window).x;
 
-				if (someBool)
+				if (pos < width / 3)
 				{
-					move(start, 0);
-					stands[start].selected = false;
-					someBool = false;
+					stands[start].selectPos = (width / 6);
+
+					if (someBool)
+					{
+						move(start, 0);
+						stands[start].selected = false;
+						someBool = false;
+					} else
+					{
+						if (stands[0].getAmount() != 0)
+						{
+							start = 0;
+							stands[start].selected = true;
+							someBool = true;
+						}
+					}
+				} else if (pos < (width / 3) * 2)
+				{
+					stands[start].selectPos = (width / 2);
+
+					if (someBool)
+					{
+						move(start, 1);
+						stands[start].selected = false;
+						someBool = false;
+					} else
+					{
+						if (stands[1].getAmount() != 0)
+						{
+							start = 1;
+							stands[start].selected = true;
+							someBool = true;
+						}
+					}
 				} else
 				{
-					if (stands[0].getAmount() != 0)
+					stands[start].selectPos = (width / 6) * 5;
+
+					if (someBool)
 					{
-						start = 0;
-						stands[start].selected = true;
-						someBool = true;
+						move(start, 2);
+						stands[start].selected = false;
+						someBool = false;
+					} else
+					{
+						if (stands[2].getAmount() != 0)
+						{
+							start = 2;
+							stands[start].selected = true;
+							someBool = true;
+						}
 					}
 				}
-			} else if (pos < (width / 3) * 2)
+				while (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {}
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) { reset(); }
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			{
-				stands[start].selectPos = (width / 2);
-
-				if (someBool)
+				if (amount < 24)
 				{
-					move(start, 1);
-					stands[start].selected = false;
-					someBool = false;
-				} else
-				{
-					if (stands[1].getAmount() != 0)
-					{
-						start = 1;
-						stands[start].selected = true;
-						someBool = true;
-					}
+					amount++;
 				}
-			} else
+				reset();
+				while (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {}
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
-				stands[start].selectPos = (width / 6) * 5;
-
-				if (someBool)
+				if (amount > 1)
 				{
-					move(start, 2);
-					stands[start].selected = false;
-					someBool = false;
-				} else
-				{
-					if (stands[2].getAmount() != 0)
-					{
-						start = 2;
-						stands[start].selected = true;
-						someBool = true;
-					}
+					amount--;
 				}
+				reset();
+				while (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {}
 			}
-			while (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {}
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) { reset(); }
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) { 
-			if (amount < 24)
-			{
-				amount++;
-			}
-			reset(); 
-			while (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			if (amount > 1)
-			{
-				amount--;
-			}
-			reset();
-			while (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {}
-		}
-
 		if (someBool)
 		{
 			if (sf::Mouse::getPosition(window).x < width / 3)
