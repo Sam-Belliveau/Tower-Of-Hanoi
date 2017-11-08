@@ -5,8 +5,8 @@
 const unsigned int width = 1200;
 const unsigned int height = 675;
 
-const sf::Color front(224, 224, 224);
-const sf::Color back(32, 32, 32);
+const sf::Color front(255, 255, 255);
+const sf::Color back(48, 48, 48);
 
 unsigned int amount = 3;
 unsigned int max = 7;
@@ -49,7 +49,7 @@ int main()
 	printf("	Move Discs - (Mouse)\n\n");
 
 	sf::ContextSettings set;
-	set.antialiasingLevel = 0;
+	set.antialiasingLevel = 16;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Towers of Hanoi", sf::Style::Close, set);
 
@@ -165,7 +165,7 @@ int main()
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
-				if (amount > 1)
+				if (amount > 2)
 				{
 					amount--;
 				}

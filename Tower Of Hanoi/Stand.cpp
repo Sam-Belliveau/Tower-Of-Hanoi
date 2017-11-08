@@ -124,11 +124,45 @@ void Stand::drawStack(sf::RenderWindow & window)
 		diskColor = sf::Color::Green;
 	} else
 	{
-		diskColor = sf::Color(255,0,0);
+		diskColor = sf::Color(204,0,0);
 	}
 
 	for (unsigned int i = 0; i < getAmount(); i++)
 	{
+		if (!done)
+		{
+			switch (stack[i] % 9)
+			{
+			case 1:
+				diskColor = sf::Color(192, 0, 0);
+				break;
+			case 2:
+				diskColor = sf::Color(192, 128, 0);
+				break;
+			case 3:
+				diskColor = sf::Color(128, 192, 0);
+				break;
+			case 4:
+				diskColor = sf::Color(0, 192, 0);
+				break;
+			case 5:
+				diskColor = sf::Color(0, 192, 128);
+				break;
+			case 6:
+				diskColor = sf::Color(0, 128, 192);
+				break;
+			case 7:
+				diskColor = sf::Color(0, 0, 192);
+				break;
+			case 8:
+				diskColor = sf::Color(128, 0, 192);
+				break;
+			case 0:
+				diskColor = sf::Color(192, 0, 128);
+				break;
+			}
+		} 
+
 		if (selected && i == getAmount() - 1)
 		{
 			minX = ((float)selectPos) - ((float)(stack[i] * size.x / 2) + 1) / ((float)max + 1);
